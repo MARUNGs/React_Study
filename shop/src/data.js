@@ -16,3 +16,5 @@ let list = [{
 }]
 
 export default list;
+// 여럿 변수 추출할 땐 
+// export {a, b}

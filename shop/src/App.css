@@ -43,3 +43,12 @@
   background-size: cover;
   background-position: center;
 }
+
+.linkTag {
+  color: #0dcaf0;
+  text-decoration: none;
+}
+
+.linkTag:hover {
+  color: black;
+}
