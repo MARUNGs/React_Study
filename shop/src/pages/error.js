@@ -6,4 +6,12 @@ function Err404() {
 	)
 }
 
-export {Err404};
+function Err500() {
+  return (
+    <div>
+      <img src={process.env.PUBLIC_URL + "/err500Page.jpg"} alt="500" />
+    </div>
+  )
+}
+
+export {Err404, Err500};
