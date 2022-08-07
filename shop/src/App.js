@@ -2,7 +2,7 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
-import { Container, Nav, Navbar, Row, Button, Card, CardGroup, Col } from 'react-bootstrap';
+import { Container, Nav, Navbar, Row, Button, Card, CardGroup, Alert } from 'react-bootstrap';
 import imgSrc from './img/bg.png'; // 이미지 사용
 import data from './data.js'; // 경로는 . 으로 시작
 import { Routes, Route, useNavigate } from 'react-router-dom';
@@ -19,6 +19,7 @@ function App() {
   let [shoes, setShoes] = useState(data)
   let navigate = useNavigate()
   let [cnt, setCnt] = useState(0)
+  let [show, setShow] = useState(true)
 
   // 원래 axios는 비동기식 통신 기술인데 동기화 형태로 변경하였음
   // const fetchShoes = async () => {
@@ -40,14 +41,43 @@ function App() {
             <BgImg />
             <Container>
               <Button onClick={async () => {
+                { show ? <LoadingAlert/> : null }
                 await axios.get("https://codingapple1.github.io/shop/data2.json")
+                .then((result) => {
+                  let copy = [...shoes, ...result.data]
+                  setShoes(copy)
+                  setCnt(++cnt)
+                  setShow(false)
+                }).catch(() => {
+                  console.log("첫번째 서버통신 실패했어")
+                })
+
+                if(cnt == 2) { // 두번 클릭했을 때 7,8,9 데이터 가져오기
+                  await axios.get("https://codingapple1.github.io/shop/data3.json")
                   .then((result) => {
                     let copy = [...shoes, ...result.data]
                     setShoes(copy)
                     setCnt(++cnt)
                   }).catch(() => {
-                    console.log("서버통신 실패했어")
+                    console.log("두번째 서버통신 실패했어")
                   })
+                } else if(cnt > 2) {
+                  alert("더이상 상품이 존재하지 않습니다.")
+                }
+
+                // post 전송
+                axios.post("/testUrl", {name: "ysk"})
+                
+                // 동시에 ajax 요청 여러개 하려면?
+                Promise.all([axios.get("/url1"), axios.get("/url2")])
+
+                // 원래 서버와 통신할 땐 '문자'만 주고받을 수 있는데 
+                // json 형태를 이용하면 문자취급하여 통신이 가능하다.
+
+                fetch("/url3")
+                .then( /*결과 => 결과.json() */ )
+                .then(/*data=>{}*/)
+
               }}> 상품추가 </Button>
 
               <Row>
@@ -107,119 +137,145 @@ function BgImg() {
   )
 }
 
-// 상품리스트
-function Cols(props) {
-  const { shoes } = props
-
-  let rows = []
-  for (let i = 0; i < props.len; i++) {
-    rows.push(i)
-  }
-
-  const cardGroup = rows
-
+// 로딩 알림창
+function LoadingAlert() {
   return (
-    // <>
-    //   {
-    //     cardGroup.map((num, i) => {
-    //       debugger
-    //       <Col sm>
-    //         <span>i</span>
-    //       </Col>
-    //     })
-    //   }
-    // </>
-
-
-
-
     <>
-      <CardGroup>
-        {
-          shoes.map((data, i) => {
-            return (
-              <Card>
-                <Card.Img variant="top" src={process.env.PUBLIC_URL + "/shoes" + (i + 1) + ".jpg"} width="80%" />
-                <Card.Body>
-                  <Card.Title> A </Card.Title>
-                  <Card.Text> B </Card.Text>
-                  <Button variant="outline-info" onClick={() => {
-                    props.navigate('/detail/' + 'C')
-                  }}>더보기</Button>
-                </Card.Body>
-              </Card>
-            )
-          })
-        }
-      </CardGroup>
-      <CardGroup>
-        <Card>
-          <Card.Body>
-            <Card.Title> A </Card.Title>
-            <Card.Text> B </Card.Text>
-            <Button variant="outline-info" onClick={() => {
-              props.navigate('/detail/' + 'C')
-            }}>더보기</Button>
-          </Card.Body>
-        </Card>
-        <Card>
-          <Card.Body>
-            <Card.Title> A </Card.Title>
-            <Card.Text> B </Card.Text>
-            <Button variant="outline-info" onClick={() => {
-              props.navigate('/detail/' + 'C')
-            }}>더보기</Button>
-          </Card.Body>
-        </Card>
-        <Card>
-          <Card.Body>
-            <Card.Title> A </Card.Title>
-            <Card.Text> B </Card.Text>
-            <Button variant="outline-info" onClick={() => {
-              props.navigate('/detail/' + 'C')
-            }}>더보기</Button>
-          </Card.Body>
-        </Card>
-      </CardGroup>
-      <CardGroup>
-        <Card>
-          <Card.Body>
-            <Card.Title> A </Card.Title>
-            <Card.Text> B </Card.Text>
-            <Button variant="outline-info" onClick={() => {
-              props.navigate('/detail/' + 'C')
-            }}>더보기</Button>
-          </Card.Body>
-        </Card>
-        <Card>
-          <Card.Body>
-            <Card.Title> A </Card.Title>
-            <Card.Text> B </Card.Text>
-            <Button variant="outline-info" onClick={() => {
-              props.navigate('/detail/' + 'C')
-            }}>더보기</Button>
-          </Card.Body>
-        </Card>
-        <Card>
-          <Card.Body>
-            <Card.Title> A </Card.Title>
-            <Card.Text> B </Card.Text>
-            <Button variant="outline-info" onClick={() => {
-              props.navigate('/detail/' + 'C')
-            }}>더보기</Button>
-          </Card.Body>
-        </Card>
-      </CardGroup>
+      <Alert key="info" variant="info">
+        <p>로딩중입니다.</p>
+      </Alert>
     </>
   )
 }
 
+// 상품리스트
+function Cols(props) {
+  // 원래는 props를 바로 이용해서 map을 이용하는 예제를 사용했어야 했으나...
+  // 강의의 내용과 내 소스를 조금 다르기 때문에 이렇게 변경하였다.
 
-function AddCardGroup() {
-  // 컴포넌트 하나에서 처리할 수 없어서 CardGroup 내 포함되는 Cards를 추가하는 컴포넌트를 생성하였다.
+  let cols = []
+  let rows = []
+  for (let i = 0; i < props.len; i++) {
+    if(i>0 && ((i+1) % 3===0)) { // 상품은 3의 배수로 취급하여 나머지값 0이면 다음 행 추가로 취급함
+      cols.push(props.shoes[i]) // 마지막 col을 담고,
+      rows.push(cols)           // rows에 추가하여 행 추가하고
+      cols = []                 // 새 컬럼들 추가하려고 다시 초기화
+    } else {
+      cols.push(props.shoes[i])
+    }
+  }
 
+  return (
+    <>
+      {
+        rows.map((cols, i) => {
+          return (
+            <CardGroup key={i}>
+              {
+                cols.map((col, j) => {
+                  return (
+                    <Card key={j}>
+                      <Card.Img variant="top" src={process.env.PUBLIC_URL + "/shoes" + (col.id + 1) + ".jpg"} width="80%" />
+                      <Card.Body>
+                        <Card.Title> {col.title} </Card.Title>
+                        <Card.Text> {col.content} </Card.Text>
+                        <Button variant="outline-info" onClick={() => {
+                          props.navigate('/detail/' + col.id)
+                        }} > 더보기 </Button>
+                      </Card.Body>
+                    </Card>
+                  )
+                })
+              }              
+            </CardGroup>
+          )
+        })
+      }
+    </>
+
+
+
+
+    // <>
+    //   <CardGroup>
+    //     {
+    //       shoes.map((data, i) => {
+    //         return (
+    //           <Card>
+    //             <Card.Img variant="top" src={process.env.PUBLIC_URL + "/shoes" + (i + 1) + ".jpg"} width="80%" />
+    //             <Card.Body>
+    //               <Card.Title> A </Card.Title>
+    //               <Card.Text> B </Card.Text>
+    //               <Button variant="outline-info" onClick={() => {
+    //                 props.navigate('/detail/' + 'C')
+    //               }}>더보기</Button>
+    //             </Card.Body>
+    //           </Card>
+    //         )
+    //       })
+    //     }
+    //   </CardGroup>
+    //   <CardGroup>
+    //     <Card>
+    //       <Card.Body>
+    //         <Card.Title> A </Card.Title>
+    //         <Card.Text> B </Card.Text>
+    //         <Button variant="outline-info" onClick={() => {
+    //           props.navigate('/detail/' + 'C')
+    //         }}>더보기</Button>
+    //       </Card.Body>
+    //     </Card>
+    //     <Card>
+    //       <Card.Body>
+    //         <Card.Title> A </Card.Title>
+    //         <Card.Text> B </Card.Text>
+    //         <Button variant="outline-info" onClick={() => {
+    //           props.navigate('/detail/' + 'C')
+    //         }}>더보기</Button>
+    //       </Card.Body>
+    //     </Card>
+    //     <Card>
+    //       <Card.Body>
+    //         <Card.Title> A </Card.Title>
+    //         <Card.Text> B </Card.Text>
+    //         <Button variant="outline-info" onClick={() => {
+    //           props.navigate('/detail/' + 'C')
+    //         }}>더보기</Button>
+    //       </Card.Body>
+    //     </Card>
+    //   </CardGroup>
+    //   <CardGroup>
+    //     <Card>
+    //       <Card.Body>
+    //         <Card.Title> A </Card.Title>
+    //         <Card.Text> B </Card.Text>
+    //         <Button variant="outline-info" onClick={() => {
+    //           props.navigate('/detail/' + 'C')
+    //         }}>더보기</Button>
+    //       </Card.Body>
+    //     </Card>
+    //     <Card>
+    //       <Card.Body>
+    //         <Card.Title> A </Card.Title>
+    //         <Card.Text> B </Card.Text>
+    //         <Button variant="outline-info" onClick={() => {
+    //           props.navigate('/detail/' + 'C')
+    //         }}>더보기</Button>
+    //       </Card.Body>
+    //     </Card>
+    //     <Card>
+    //       <Card.Body>
+    //         <Card.Title> A </Card.Title>
+    //         <Card.Text> B </Card.Text>
+    //         <Button variant="outline-info" onClick={() => {
+    //           props.navigate('/detail/' + 'C')
+    //         }}>더보기</Button>
+    //       </Card.Body>
+    //     </Card>
+    //   </CardGroup>
+    // </>
+  )
 }
-
 
 export default App;
 

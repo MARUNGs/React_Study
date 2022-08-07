@@ -52,3 +52,13 @@
 .linkTag:hover {
   color: black;
 }
+
+/* 전환 애니메이션 생성 */
+.start {
+  opacity: 0;
+}
+
+.end {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
