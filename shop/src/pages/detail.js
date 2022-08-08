@@ -1,9 +1,11 @@
 /* eslint-disable */
 import { useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { Container, Row, Col, Alert, Form, Nav } from 'react-bootstrap';
+import { Container, Row, Col, Alert, Form, Nav, Button } from 'react-bootstrap';
 // Context API Setting 3
 import { Context1 } from './../App.js'
+import { useDispatch, useSelector } from "react-redux";
+import { pushCart } from './../store.js'
 
 function Detail(props) {
   let [cnt, setCnt] = useState(0);
@@ -14,6 +16,8 @@ function Detail(props) {
   let [variant, setVariant] = useState(null);
   let [change, setChange] = useState(0);
   let [tab, setTab] = useState(0);
+  let cart = useSelector((state) => state.cart )
+  let dispatch = useDispatch()
 
   
 
@@ -76,9 +80,14 @@ function Detail(props) {
                     <h4 className="pt-5">{item.title}</h4>
                     <p>{item.content}</p>
                     <p>\{item.price}원</p>
-                    <button onClick={()=>{
+                    <Button onClick={()=>{
                       setCnt(++cnt)
-                    }} className="btn btn-danger">주문하기</button>
+
+                      debugger
+
+                      // [주문하기] 버튼 클릭 시 장바구니에 추가. --> store.js
+                      dispatch(pushCart(item))
+                    }} variant="danger">주문하기</Button>
                   </Col>
                 </Row>
               )

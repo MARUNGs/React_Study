@@ -34,10 +34,13 @@ let cart = createSlice({
           state[action.payload].count += 1
         }
       })
+    }, 
+    pushCart(state, action) {
+      state.push(action.payload)
     }
   }
 })
-export let { count } = cart.actions
+export let { count, pushCart } = cart.actions
 
 
 

@@ -112,12 +112,7 @@ function App() {
         {/* 장바구니 만들기 */}
         <Route path="/cart" element={ <Cart/> } />
 
-
-
-
-
-
-
+        {/* ****************************************************************************** */}
 
         <Route path="/about" element={<About />}>
           <Route path="member" element={<div>member element</div>} />
