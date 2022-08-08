@@ -1,7 +1,7 @@
 /* eslint-disable */
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { Container, Nav, Navbar, Row, Button, Card, CardGroup, Alert } from 'react-bootstrap';
 import imgSrc from './img/bg.png'; // 이미지 사용
 import data from './data.js'; // 경로는 . 으로 시작
@@ -13,6 +13,12 @@ import { Detail } from './pages/detail.js';
 import { Err404 } from './pages/error.js';
 import About from './pages/about.js';
 import { Event } from './pages/event.js';
+import Cart from './pages/cart.js';
+
+
+// Context API Setting 1
+export let Context1 = createContext() // state 보관함 생성
+
 
 function App() {
 
@@ -20,6 +26,7 @@ function App() {
   let navigate = useNavigate()
   let [cnt, setCnt] = useState(0)
   let [show, setShow] = useState(true)
+  let [stock] = useState([10, 11, 12])
 
   // 원래 axios는 비동기식 통신 기술인데 동기화 형태로 변경하였음
   // const fetchShoes = async () => {
@@ -66,10 +73,10 @@ function App() {
                 }
 
                 // post 전송
-                axios.post("/testUrl", {name: "ysk"})
+                // axios.post("/testUrl", {name: "ysk"})
                 
                 // 동시에 ajax 요청 여러개 하려면?
-                Promise.all([axios.get("/url1"), axios.get("/url2")])
+                // Promise.all([axios.get("/url1"), axios.get("/url2")])
 
                 // 원래 서버와 통신할 땐 '문자'만 주고받을 수 있는데 
                 // json 형태를 이용하면 문자취급하여 통신이 가능하다.
@@ -95,7 +102,22 @@ function App() {
 
         {/* URL 파라미터 - :id */}
         {/* 파라미터는 몇번이고 추가할 수 있다. */}
-        <Route path="/detail/:id" element={<Detail shoes={shoes} />} />
+        {/* Context API Setting 2 */}
+        <Route path="/detail/:id" element={
+          <Context1.Provider value={{ stock, shoes }}> {/* ==> props 대신 사용할 수 있는 state 보관함 등록 */}
+            <Detail shoes={shoes} />
+          </Context1.Provider>
+        } />
+
+        {/* 장바구니 만들기 */}
+        <Route path="/cart" element={ <Cart/> } />
+
+
+
+
+
+
+
 
         <Route path="/about" element={<About />}>
           <Route path="member" element={<div>member element</div>} />
@@ -122,7 +144,7 @@ function NavBarTop() {
         <Navbar.Brand href="/">SHOP</Navbar.Brand>
         <Nav className="me-auto">
           <Nav.Link href="#home">INTRODUCTION</Nav.Link>
-          <Nav.Link href="#features">DETAIL</Nav.Link>
+          <Nav.Link href="/cart">Cart</Nav.Link>
           <Nav.Link href="#pricing">QnA</Nav.Link>
         </Nav>
       </Container>

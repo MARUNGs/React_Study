@@ -1,9 +1,11 @@
 /* eslint-disable */
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Container, Row, Col, Alert, Form, Nav } from 'react-bootstrap';
+// Context API Setting 3
+import { Context1 } from './../App.js'
 
-function Detail(props, {detailClass}) {
+function Detail(props) {
   let [cnt, setCnt] = useState(0);
   let {id} = useParams();
   const shoes = props.shoes;
@@ -12,6 +14,8 @@ function Detail(props, {detailClass}) {
   let [variant, setVariant] = useState(null);
   let [change, setChange] = useState(0);
   let [tab, setTab] = useState(0);
+
+  
 
   // **********************************************
   useEffect(()=>{
@@ -95,12 +99,16 @@ function Detail(props, {detailClass}) {
         </Nav.Item>
       </Nav>
 
-      <TabContent tab={tab}/>
+      <TabContent tab={tab} shoes={props.shoes}/>
     </>
   )
 }
-function TabContent({tab}) { // props -> {tab}
+function TabContent({tab, shoes}) { // props -> {tab}
   let [fade, setFade] = useState(null)
+  // Context API Setting 4
+  let {stock} = useContext(Context1)
+
+
   
   useEffect(() => { // 헐 대박 여기서도 쓸 수 있어
     // tab 값이 변경될때마다 className 부여
@@ -124,7 +132,7 @@ function TabContent({tab}) { // props -> {tab}
     // className은 띄어쓰기를 주의할 것
     <div className={`start + ${fade}`}>
       {
-        [<div>내용 {tab}</div>, <div>내용 {tab}</div>, <div>내용 {tab}</div>][tab]
+        [<div>내용 {tab} {stock}, {shoes[0].title}</div>, <div>내용 {tab}</div>, <div>내용 {tab}</div>][tab]
       }
     </div>
   )
