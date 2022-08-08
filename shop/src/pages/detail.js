@@ -17,7 +17,22 @@ function Detail(props) {
 
   
 
-  // **********************************************
+  // 1. 첫 랜더링할 때만 안내글 div 2초 보여주고 없애기
+  useEffect(() => {
+    setModal(true)
+    setVariant('warning')
+    setMent('2초이내 구매시 할인!')
+    
+    let timer = setTimeout(() => {
+      setModal(false)
+    }, 2000)
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [ment]) // 멘트 변경마다 실행
+
+  // 2. 문자입력시 숫자입력 안내 보여주기
   useEffect(()=>{
     // mount, update시 실행된다.
     let timer
@@ -37,28 +52,13 @@ function Detail(props) {
   }, [change])
   // **********************************************
 
-  // 첫 랜더링할 때만 안내글 div 2초 보여주고 없애기
-  useEffect(() => {
-    let timer
-
-    timer = setTimeout(()=>{
-      if(modal) setModal(false)
-    }, 2000)
-
-    // 1번만 실행
-    return () => {
-      clearTimeout(timer)
-      setVariant("warning")
-      setMent("2초 안에 구매시 할인혜택 적용!")
-    }
-  }, [])
-
 	return (
     <>
       {
         (modal) ? <ModalDisappear ment={ment} variant={variant} /> : null
       }
 
+      <br />
       <Container>
         {
           shoes.map(function(item, i) {
@@ -78,7 +78,7 @@ function Detail(props) {
                     <p>\{item.price}원</p>
                     <button onClick={()=>{
                       setCnt(++cnt)
-                    }} className="btn btn-danger">구매</button>
+                    }} className="btn btn-danger">주문하기</button>
                   </Col>
                 </Row>
               )
@@ -111,21 +111,13 @@ function TabContent({tab, shoes}) { // props -> {tab}
 
   
   useEffect(() => { // 헐 대박 여기서도 쓸 수 있어
-    // tab 값이 변경될때마다 className 부여
     setTimeout(() => {
       setFade('end')
     }, 100)
     
     return () => {
-      // state가 변할 때마다 className을 뗐다가 다시 부착해야 한다.
       setFade('')
     }
-
-    // [automatic batching]
-    // state 변경이 되고나서 재렌더링 한번만 실행해주는 기능이 react에 내장되어 있다.
-    // 그렇다보니 setFade('')와 setFade('end') 코드를 합쳐서 결국 setFade('end')가 되는데,
-    // 이렇게 되면 뗐다가 다시 부착해야 발동하려는 목적을 달성할 수 없으므로,
-    // setTimeout() 으로 코드실행 간격을 줘야 한다.
   }, [tab])
   
   return (
