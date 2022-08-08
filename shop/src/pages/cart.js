@@ -3,12 +3,11 @@ import { Table, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { rename, plusAge } from './../store/userSlice.js'
 import { count } from './../store.js'
-import { useEffect } from 'react';
 
 function Cart() {
   let slices = useSelector((state) => state )
   let dispatch = useDispatch()
-  
+
   return (
     <div>
       <h6> { slices.user.name }의 나이 : { slices.user.age } </h6>
@@ -36,7 +35,7 @@ function Cart() {
                   <td>
                     <Button variant="secondary" onClick={() => {
                       // dispatch(rename())
-                      dispatch(count(data.id))
+                      dispatch(count(slices.cart[i].id))
                     }}> + </Button>
                   </td>
                 </tr>

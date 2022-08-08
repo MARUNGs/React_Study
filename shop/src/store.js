@@ -18,22 +18,17 @@ let stock = createSlice({
 // cart.js 데이터와 기능
 let cart = createSlice({
   name: 'stockList',
-  initialState: [{
-    id: 0,
-    name: 'White and Black',
-    count: 2
-  }, {
-    id: 2,
-    name: 'Grey Yordan',
-    count: 1
-  }],
+  initialState: [
+    { id: 0, name: 'White and Black', count: 2 },
+    { id: 2, name: 'Grey Yordan', count: 1 }
+  ],
   reducers: {
     count(state, action) {
-      state.map((obj, i) => {
-        if(obj.id === action.payload) {
-          state[action.payload].count += 1
-        }
+      // findIndex : ArrayList 에서만 사용할 수 있음
+      let id =state.findIndex((obj) => { // obj : state list 하나하나의 객체를 의미
+        { return  obj.id === action.payload }
       })
+      state[id].count++
     }, 
     pushCart(state, action) {
       state.push(action.payload)

@@ -16,7 +16,6 @@ function Detail(props) {
   let [variant, setVariant] = useState(null);
   let [change, setChange] = useState(0);
   let [tab, setTab] = useState(0);
-  let cart = useSelector((state) => state.cart )
   let dispatch = useDispatch()
 
   
@@ -82,8 +81,6 @@ function Detail(props) {
                     <p>\{item.price}원</p>
                     <Button onClick={()=>{
                       setCnt(++cnt)
-
-                      debugger
 
                       // [주문하기] 버튼 클릭 시 장바구니에 추가. --> store.js
                       dispatch(pushCart(item))
