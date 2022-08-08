@@ -81,9 +81,9 @@ function App() {
                 // 원래 서버와 통신할 땐 '문자'만 주고받을 수 있는데 
                 // json 형태를 이용하면 문자취급하여 통신이 가능하다.
 
-                fetch("/url3")
-                .then( /*결과 => 결과.json() */ )
-                .then(/*data=>{}*/)
+                // fetch("/url3")
+                // .then( /*결과 => 결과.json() */ )
+                // .then(/*data=>{}*/)
 
               }}> 상품추가 </Button>
 

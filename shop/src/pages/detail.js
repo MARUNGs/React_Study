@@ -83,7 +83,7 @@ function Detail(props) {
                       setCnt(++cnt)
 
                       // [주문하기] 버튼 클릭 시 장바구니에 추가. --> store.js
-                      dispatch(pushCart(item))
+                      dispatch(pushCart( {id: 1, name: 'Red Knit', count: 1} ))
                     }} variant="danger">주문하기</Button>
                   </Col>
                 </Row>
