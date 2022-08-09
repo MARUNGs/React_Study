@@ -10,6 +10,7 @@ import { pushCart } from './../store.js'
 function Detail(props) {
   let [cnt, setCnt] = useState(0);
   let {id} = useParams();
+  let find = props.shoes.find(x => x.id === id)
   const shoes = props.shoes;
   let [modal, setModal] = useState(true);
   let [ment, setMent] = useState(null);
@@ -17,9 +18,9 @@ function Detail(props) {
   let [change, setChange] = useState(0);
   let [tab, setTab] = useState(0);
   let dispatch = useDispatch()
+  let watched = null // 최근 본 상품목록에 이용할 변수는 재렌더링 필요없음 
 
-  
-
+  // ********************************************************************************************
   // 1. 첫 랜더링할 때만 안내글 div 2초 보여주고 없애기
   useEffect(() => {
     setModal(true)
@@ -53,7 +54,32 @@ function Detail(props) {
       })
     }
   }, [change])
-  // **********************************************
+
+  // 최근 본 상품목록에 추가
+  /* 목표 : 사용자가 Detail page 접속하면 그 페이지에 보이는 상품id를 가져와서
+            LocalStorage에 watched 항목에 추가한다. */
+  useEffect(() => {
+    let storageList = JSON.parse(localStorage.getItem("watched")) // []
+
+    if(watched) {
+      if(storageList.length > 0) {
+        // push 전에 동일한 id값 index 찾기
+        let existenceId = storageList.findIndex((obj) => {
+          return obj.id === watched.id
+        })
+
+        if(existenceId === -1) {
+          // 중복된 상품이 없다면 최근 본 상품목록에 추가한다.
+          storageList.push(watched)
+        }
+      }
+    } else {
+      storageList.push(watched)
+    }
+
+    localStorage.setItem("watched", JSON.stringify(storageList))
+  }, [watched])
+  // ********************************************************************************************
 
 	return (
     <>
@@ -66,6 +92,7 @@ function Detail(props) {
         {
           shoes.map(function(item, i) {
             if(Number(item.id) === Number(id)) {
+              watched = item // 최근본 상품
               return (
                 <Row key={i}>
                   <Col sm>
@@ -109,12 +136,12 @@ function Detail(props) {
     </>
   )
 }
+
+// 탭UI 컨텐츠
 function TabContent({tab, shoes}) { // props -> {tab}
   let [fade, setFade] = useState(null)
   // Context API Setting 4
   let {stock} = useContext(Context1)
-
-
   
   useEffect(() => { // 헐 대박 여기서도 쓸 수 있어
     setTimeout(() => {
@@ -136,6 +163,7 @@ function TabContent({tab, shoes}) { // props -> {tab}
   )
 }
 
+// 알림창
 function ModalDisappear(props) {
   return (
     <Container>

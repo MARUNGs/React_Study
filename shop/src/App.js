@@ -7,6 +7,7 @@ import imgSrc from './img/bg.png'; // 이미지 사용
 import data from './data.js'; // 경로는 . 으로 시작
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 // 페이지별 import
 import { Detail } from './pages/detail.js';
@@ -19,7 +20,6 @@ import Cart from './pages/cart.js';
 // Context API Setting 1
 export let Context1 = createContext() // state 보관함 생성
 
-
 function App() {
 
   let [shoes, setShoes] = useState(data)
@@ -28,6 +28,18 @@ function App() {
   let [show, setShow] = useState(true)
   let [stock] = useState([10, 11, 12])
 
+
+  /***** [ useEffect ] *****/
+  // 최근 본 상품목록 초기화
+  useEffect(() => {
+    let storageList = JSON.parse(localStorage.getItem("watched"))
+
+    if(storageList == null) {
+      localStorage.setItem('watched', JSON.stringify([]))
+    }
+  }, [])
+
+  /***** [ 숙제 ] ******/
   // 원래 axios는 비동기식 통신 기술인데 동기화 형태로 변경하였음
   // const fetchShoes = async () => {
   //   const { data } = await axios.get("https://codingapple1.github.io/shop/data2.json")
@@ -39,9 +51,19 @@ function App() {
   //   if (!flag) fetchShoes() // false일때만 동기화 실행
   // }, [cnt])
 
+  /***** [ react-query ] *****/
+  let result = useQuery(['작명'], () => {
+    return axios.get("https://codingapple1.github.io/userdata.json")
+    .then((a) => {
+      return a.data
+    })
+  })
+
+
+
   return (
     <div className="App">
-      <NavBarTop />
+      <NavBarTop navigate={navigate} />
       <Routes>
         <Route path="/" element={ // 메인페이지
           <>
@@ -132,16 +154,19 @@ function App() {
 }
 
 // 내비게이션
-function NavBarTop() {
+function NavBarTop(props) {
   return (
     <Navbar bg="dark" variant="dark">
       <Container>
         <Navbar.Brand href="/">SHOP</Navbar.Brand>
         <Nav className="me-auto">
           <Nav.Link href="#home">INTRODUCTION</Nav.Link>
-          <Nav.Link href="/cart">Cart</Nav.Link>
+          <Nav.Link onClick={() => {
+            props.navigate("/cart")
+          }}>Cart</Nav.Link>
           <Nav.Link href="#pricing">QnA</Nav.Link>
         </Nav>
+        <Nav className="ms-auto helloUser">반갑습니다. Yoo님</Nav>
       </Container>
     </Navbar>
   )
