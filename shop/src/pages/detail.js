@@ -178,4 +178,4 @@ function ModalDisappear(props) {
   )
 }
 
-export {Detail};
+export default Detail;
